@@ -4,6 +4,13 @@ export const typeLabels = {
   activities: "Activity",
   events: "Event",
 };
+export function filterValues(records, field, type) {
+  const values = records
+    .filter((record) => record.type === type)
+    .flatMap((record) => record[field] ?? [])
+    .filter((value) => typeof value === "string" && value.trim());
+  return [...new Set(values)].sort((a, b) => a.localeCompare(b));
+}
 export function filterPois(records, filters = {}) {
   const search = (filters.search || "").trim().toLowerCase();
   return records

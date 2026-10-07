@@ -55,7 +55,7 @@ All requests are in `src/services/api.js`; components use the shared service int
 - Trip and itinerary GET/POST/PUT/DELETE with user-local numbers.
 - Itinerary POI membership POST/DELETE under the existing composite-key path.
 
-Catalogue filters in live mode are sent to the existing backend; sorts and progressive display are local. List endpoints without total counts are read page-by-page with a 100-row limit. Live mode merges subtype lists for common cards and fetches full detail only when needed. Itinerary membership is displayed alphabetically, matching the database's unordered association.
+Catalogue filters in live mode are sent to the existing backend; sorts and progressive display are local. List endpoints without total counts are read page-by-page with a 100-row limit. Live mode merges subtype lists for common cards and loads restaurant/activity details to obtain their cuisine and season collections. Dropdown choices reflect database values. Itinerary membership is displayed alphabetically, matching the database's unordered association.
 
 ## Remaining differences and next steps
 
@@ -63,7 +63,7 @@ Catalogue filters in live mode are sent to the existing backend; sorts and progr
 2. Only Lalbagh, Bangalore Palace, Gateway of India and Marine Drive have bundled photographs. Other records use intentional neutral place-holder illustrations instead of unrelated landmark photos. Add licensed exact-location food/activity/venue photos when the source export is available.
 3. Demo data, illustrative values and localStorage persist all CRUD until live mode is selected. No mock rows have been inserted into Oracle.
 4. Start the existing backend, enable `VITE_USE_MOCK_DATA=false`, restart Vite and check CORS, actual filter enum values, real demo-user IDs and null fields.
-5. Verify live saved-POI, review, trip, itinerary and membership CRUD with temporary records. Handle the existing trip-deletion conflict by deleting its itineraries first. Review sequence setup belongs to the backend.
+5. Live saved-POI, review, trip, itinerary and membership persistence was verified with temporary records on 8 October 2026. The backend rejects trip deletion until its itineraries are removed. All temporary records were cleaned up; pre-test Oracle counts and mutable-table checksums match. Review sequence allocation advances normally during tests.
 6. Live mode does not import demo reviews/plans into the database. No database concepts, tables or backend files were modified.
 
 See `VERIFICATION.md` for the checks actually performed.

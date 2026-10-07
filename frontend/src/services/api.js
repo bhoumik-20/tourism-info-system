@@ -62,9 +62,20 @@ const live = {
       request("/cities"),
       request("/users"),
       Promise.all(
-        subtypes.map(async (type) =>
-          (await readAll(`/${type}`)).map((p) => normalize(p, type)),
-        ),
+        subtypes.map(async (type) => {
+          const records = await readAll(`/${type}`);
+          // Cuisine and season collections are exposed only on subtype details.
+          return Promise.all(
+            records.map(async (poi) =>
+              normalize(
+                type === "restaurants" || type === "activities"
+                  ? await request(`/${type}/${poi.poiId}`)
+                  : poi,
+                type,
+              ),
+            ),
+          );
+        }),
       ),
     ]);
     const selectedUser = users.some((u) => u.userId === userId)
@@ -76,13 +87,11 @@ const live = {
       readAll(`/users/${selectedUser}/trips`),
       readAll(`/users/${selectedUser}/itineraries`),
     ]);
-    const catalog = lists
-      .flat()
-      .map((p) => ({
-        ...p,
-        cityName:
-          cities.find((c) => c.cityId === p.cityId)?.cityName || p.cityName,
-      }));
+    const catalog = lists.flat().map((p) => ({
+      ...p,
+      cityName:
+        cities.find((c) => c.cityId === p.cityId)?.cityName || p.cityName,
+    }));
     const detailedItineraries = await Promise.all(
       itineraries.map((i) =>
         request(`/users/${selectedUser}/itineraries/${i.itineraryNo}`),

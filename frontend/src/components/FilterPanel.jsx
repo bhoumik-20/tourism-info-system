@@ -1,5 +1,6 @@
 import { SlidersHorizontal } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import { filterValues } from "../services/catalog.js";
 
 function SelectFilter({ name, label, filters, change, options }) {
   return (
@@ -21,6 +22,7 @@ function SelectFilter({ name, label, filters, change, options }) {
 }
 export default function FilterPanel({ resource, filters, change, clear }) {
   const { data } = useApp();
+  const options = (field) => filterValues(data.catalog, field, resource);
   return (
     <aside className="filter-panel" aria-label="Search filters">
       <div className="filter-heading">
@@ -73,14 +75,14 @@ export default function FilterPanel({ resource, filters, change, clear }) {
             label="Cuisine"
             filters={filters}
             change={change}
-            options={["South Indian", "Indian", "Continental", "Parsi"]}
+            options={options("cuisines")}
           />
           <SelectFilter
             name="priceRange"
             label="Price range"
             filters={filters}
             change={change}
-            options={["Budget", "Mid-range", "Premium"]}
+            options={options("priceRange")}
           />
           <label className="radio-label">
             <input
@@ -107,21 +109,21 @@ export default function FilterPanel({ resource, filters, change, clear }) {
             label="Activity type"
             filters={filters}
             change={change}
-            options={["Walking Tour", "Cycling", "Trekking", "Boating"]}
+            options={options("activityType")}
           />
           <SelectFilter
             name="difficulty"
             label="Difficulty"
             filters={filters}
             change={change}
-            options={["Easy", "Moderate", "Hard"]}
+            options={options("difficultyLevel")}
           />
           <SelectFilter
             name="season"
             label="Season"
             filters={filters}
             change={change}
-            options={["Summer", "Winter", "Monsoon"]}
+            options={options("seasons")}
           />
           <label className="filter-field">
             Maximum cost (₹)
@@ -143,7 +145,7 @@ export default function FilterPanel({ resource, filters, change, clear }) {
             label="Event type"
             filters={filters}
             change={change}
-            options={["Exhibition", "Music", "Festival", "Cultural"]}
+            options={options("eventType")}
           />
           <label className="filter-field">
             From

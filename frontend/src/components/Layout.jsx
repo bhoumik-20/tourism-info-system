@@ -118,7 +118,11 @@ export default function Layout() {
             <span>
               {isDemo
                 ? "Demo data · saved on this browser"
-                : "Connected to your tourism database"}
+                : error
+                  ? "Tourism database unavailable"
+                  : loading
+                    ? "Connecting to your tourism database…"
+                    : "Connected to your tourism database"}
             </span>
             <span>Tourism Information System · BACSE202</span>
           </div>

@@ -36,7 +36,7 @@ Restart Vite after changing environment variables. Start the existing `../backen
 
 `src/services/api.js` contains all network requests and the adapter for the actual camelCase `{ data }` contracts. It chooses demo or live mode explicitly, handles 204/errors/timeouts and reads pagination. It does not silently replace failed live requests with demo data. Live mode discovers real user IDs and preserves `userId + tripNo` / `userId + itineraryNo` composite ownership.
 
-The backend was not listening on port 5000 during initial inspection. Live writes have not been verified against Oracle; do that separately using temporary records after starting the backend.
+Live integration was verified on 8 October 2026 against the existing Oracle XE database. The current ignored local `.env` selects live mode. Browser-created saves, reviews, trips, itineraries and memberships persisted through the API and reloads; all temporary records were removed and database counts/checksums restored. See `VERIFICATION.md`. Filter choices come from actual database values, including cuisine and season collections loaded from subtype details.
 
 ## Routes
 
