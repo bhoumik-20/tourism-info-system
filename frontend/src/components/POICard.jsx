@@ -1,0 +1,102 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Bookmark,
+  MapPin,
+  ArrowUpRight,
+  Clock,
+  CalendarDays,
+} from "lucide-react";
+import { useApp } from "../context/AppContext";
+import { api } from "../services/api";
+import { typeLabels } from "../services/catalog";
+import { Photo, Rating, money, dateLabel, ErrorMessage } from "./UI";
+
+export function SaveButton({ poi, compact = false }) {
+  const { data, userId, act } = useApp();
+  const saved = data.saved.includes(poi.poiId);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  async function toggle() {
+    setPending(true);
+    setError("");
+    try {
+      await act(
+        () => api.savePoi(userId, poi.poiId, !saved),
+        saved
+          ? "Removed from your saved places"
+          : "Saved for your next adventure",
+      );
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setPending(false);
+    }
+  }
+  return (
+    <span className={compact ? "save-control compact" : "save-control"}>
+      <button
+        disabled={pending}
+        className={`${compact ? "icon-button" : "button secondary"} ${saved ? "is-saved" : ""}`}
+        aria-label={`${saved ? "Unsave" : "Save"} ${poi.name}`}
+        aria-pressed={saved}
+        onClick={toggle}
+      >
+        <Bookmark size={17} fill={saved ? "currentColor" : "none"} />
+        {!compact && (saved ? "Saved" : "Save place")}
+      </button>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+    </span>
+  );
+}
+export default function POICard({ poi }) {
+  const metadata =
+    poi.type === "restaurants"
+      ? poi.priceRange || "Dining"
+      : poi.type === "activities"
+        ? `${money(poi.cost)} · ${poi.duration || "Flexible duration"}`
+        : poi.type === "events"
+          ? dateLabel(poi.startDate)
+          : money(poi.entryFee);
+  return (
+    <article className="poi-card">
+      <div className="card-image">
+        <Link
+          to={`/pois/${poi.poiId}`}
+          aria-label={`View ${poi.name}`}
+          tabIndex={-1}
+        >
+          <Photo poi={poi} credit="inline" />
+        </Link>
+        <span className={`badge ${poi.type}`}>
+          {typeLabels[poi.type] || "POI"}
+        </span>
+        <span className="card-rating">
+          <Rating value={poi.averageRating} />
+        </span>
+      </div>
+      <div className="card-body">
+        <p className="card-location">
+          <MapPin size={12} />
+          {poi.cityName || poi.addressCity}
+        </p>
+        <Link className="card-title" to={`/pois/${poi.poiId}`}>
+          {poi.name}
+          <ArrowUpRight size={17} />
+        </Link>
+        <p className="card-description">{poi.description}</p>
+        <div className="card-bottom">
+          <span>
+            {poi.type === "events" ? (
+              <CalendarDays size={14} />
+            ) : (
+              <Clock size={14} />
+            )}
+            {metadata}
+          </span>
+          <SaveButton poi={poi} compact />
+        </div>
+      </div>
+    </article>
+  );
+}
