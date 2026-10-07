@@ -59,7 +59,7 @@ function list(resource) {
       where.push('p.City_ID = :cityId'); binds.cityId = v.id(req.query.city, 'city', 999999);
     }
     if (req.query.search !== undefined) {
-      where.push("(LOWER(p.Name) LIKE :search ESCAPE '\' OR LOWER(p.Description) LIKE :search ESCAPE '\')");
+      where.push("(LOWER(p.Name) LIKE :search ESCAPE '!' OR LOWER(p.Description) LIKE :search ESCAPE '!')");
       binds.search = v.like(v.text(req.query.search, 'search', 150, true).toLowerCase());
     }
     if (req.query.minRating !== undefined) {

@@ -79,5 +79,5 @@ async function affected(connection, sql, binds) {
   const result = await connection.execute(sql, binds);
   if (!result.rowsAffected) fail(404, 'Resource not found.');
 }
-function like(value) { return `%${value.replace(/[\\%_]/g, '\\$&')}%`; }
+function like(value) { return `%${value.replace(/[!%_]/g, '!$&')}%`; }
 module.exports = { fail, id, text, number, date, body, query, page, camel, rows, one, paginate, affected, like };
