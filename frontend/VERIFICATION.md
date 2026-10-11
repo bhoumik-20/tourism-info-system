@@ -1,5 +1,16 @@
 # Verification performed
 
+## Phase 2 — 11 October 2026
+
+- Production build passed; 14 offline frontend tests and 3 live read-only backend tests passed.
+- Live browser reads verified guest profile prompting, real profile menu/switcher, Aarav/Meera composite ownership, selection persistence after reload, profile attributes/statistics, trip dashboard rendering and the real itinerary destination picker.
+- All six curated screens showed real rows and a Save/Add to Itinerary action per card: Top Rated 10, Popular 24, Budget 23, Foodie 4, Upcoming 4, Hidden Gems 12. Top Rated city filtering showed five Mumbai rows.
+- A loading-state crash from index-to-collection navigation was found in the browser, fixed and rechecked. Backend data/counts were unaffected.
+- A temporary 390px phone viewport showed the mobile profile/navigation controls and no horizontal document overflow; it was reset. Desktop profile, collections and dashboard were visually inspected.
+- Phase 2 browser writes and live write/trigger suites remain pending explicit approval under TEST_PLAN_PHASE2.md. No claim is made that creation, mutation feedback or cleanup has been verified in this phase yet.
+
+The historical results below describe earlier runs and do not supersede these Phase 2 limits.
+
 ## Live integration — 8 October 2026
 
 The current local frontend environment selects the existing API at `http://localhost:5000/api` with mock mode disabled. Oracle XE 11.2 connectivity succeeded using the existing backend configuration.

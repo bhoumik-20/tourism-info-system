@@ -54,3 +54,76 @@ The query isolates the user's trip itineraries, counts memberships using LEFT JO
 See [backend/TESTING.md](backend/TESTING.md) for actual execution results and [TEST_PLAN_PHASE2.md](TEST_PLAN_PHASE2.md) for live fixture/cleanup approval details. Frontend unit tests use only offline data; read-only backend tests use real Oracle GET/SELECT operations. Write tests are guarded and must be approved before execution.
 
 No new dependency, authentication framework, ORM, Docker, Redis, migration or seed system is used. The local SQL*Plus spool and handout remain ignored and unmodified. Profiles can be edited, but no profile-deletion endpoint is added. Completed-trip locking is intentionally irreversible through the normal app, following the installed triggers.
+
+## Folder structure and changed files
+
+```text
+Code/
+  backend/
+    scripts/                 # connection and SELECT-only schema checks
+    src/controllers/         # users, collections, summary, existing catalog/writes
+    src/routes/api.js
+    src/config/database.js   # existing Thick-mode pool and transactions
+    test/                    # read-only, existing regression, guarded Phase 2 writes
+    README.md, TESTING.md, .env.example
+  frontend/
+    src/components/          # profile controls, collection cards, summary, existing UI
+    src/context/             # shared active profile and safe persistence
+    src/pages/               # Profile, Collections, existing discovery/planning pages
+    src/services/            # central API, view normalization, optional offline repository
+    test/
+    README.md, VERIFICATION.md, .env.example
+  database/                  # preserved existing course references
+  PHASE2.md, TEST_PLAN_PHASE2.md
+```
+
+Files added/modified in Phase 2 (existing configuration and SQL reference files are preserved):
+
+- `.gitignore`
+- `PHASE2.md`
+- `README.md`
+- `TEST_PLAN_PHASE2.md`
+- `backend/README.md`
+- `backend/TESTING.md`
+- `backend/package.json`
+- `backend/scripts/check-schema.js`
+- `backend/scripts/setup-db.js`
+- `backend/src/app.js`
+- `backend/src/controllers/collections.js`
+- `backend/src/controllers/reviews.js`
+- `backend/src/controllers/summary.js`
+- `backend/src/controllers/users.js`
+- `backend/src/routes/api.js`
+- `backend/test/integration.test.js`
+- `backend/test/phase2.test.js`
+- `backend/test/read-only.test.js`
+- `database/README.md`
+- `frontend/.env.example`
+- `frontend/IMPLEMENTATION.md`
+- `frontend/README.md`
+- `frontend/VERIFICATION.md`
+- `frontend/src/App.jsx`
+- `frontend/src/components/CollectionsSection.jsx`
+- `frontend/src/components/FilterPanel.jsx`
+- `frontend/src/components/Layout.jsx`
+- `frontend/src/components/POICard.jsx`
+- `frontend/src/components/PlanForm.jsx`
+- `frontend/src/components/Profiles.jsx`
+- `frontend/src/components/Reviews.jsx`
+- `frontend/src/components/TripSummary.jsx`
+- `frontend/src/context/AppContext.jsx`
+- `frontend/src/context/profileSelection.js`
+- `frontend/src/pages/Collections.jsx`
+- `frontend/src/pages/Home.jsx`
+- `frontend/src/pages/Itinerary.jsx`
+- `frontend/src/pages/Plans.jsx`
+- `frontend/src/pages/Profile.jsx`
+- `frontend/src/pages/Saved.jsx`
+- `frontend/src/services/api.js`
+- `frontend/src/services/catalog.js`
+- `frontend/src/services/collections.js`
+- `frontend/src/services/mockRepository.js`
+- `frontend/src/styles.css`
+- `frontend/test/collections.test.js`
+- `frontend/test/filters.test.js`
+- `frontend/test/profiles.test.js`
