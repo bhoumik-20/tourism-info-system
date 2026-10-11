@@ -1,15 +1,20 @@
 # Verification performed
 
-## Phase 2 — 11 October 2026
+## Phase 2 — 12 October 2026, approved live writes
 
-- Production build passed; 14 offline frontend tests and 3 live read-only backend tests passed.
-- Live browser reads verified guest profile prompting, real profile menu/switcher, Aarav/Meera composite ownership, selection persistence after reload, profile attributes/statistics, trip dashboard rendering and the real itinerary destination picker.
-- All six curated screens showed real rows and a Save/Add to Itinerary action per card: Top Rated 10, Popular 24, Budget 23, Foodie 4, Upcoming 4, Hidden Gems 12. Top Rated city filtering showed five Mumbai rows.
-- A loading-state crash from index-to-collection navigation was found in the browser, fixed and rechecked. Backend data/counts were unaffected.
-- A temporary 390px phone viewport showed the mobile profile/navigation controls and no horizontal document overflow; it was reset. Desktop profile, collections and dashboard were visually inspected.
-- Phase 2 browser writes and live write/trigger suites remain pending explicit approval under TEST_PLAN_PHASE2.md. No claim is made that creation, mutation feedback or cleanup has been verified in this phase yet.
+- Backend: 15 real Oracle/Express tests passed. Frontend: 14 offline tests passed. Production build passed after the browser date-input fix.
+- Created two disposable profiles using the actual UI; creation automatically selected the returned ID. Birth dates persisted on edit and fresh creation, other profile fields persisted, a local image loaded as both avatars, and reload preserved the selection.
+- A's new Planned trip, dated itineraries, saved POI and review persisted. Its review edited successfully. Switching to B cleared A's saved/planning data and review edit/delete controls. Same-number foreign trip/itinerary routes showed not found. Switching back restored A's data.
+- Added real POIs to A's itinerary through all six collection pages. Original view POI_ID values were independently verified in Oracle. Existing membership options were disabled. No-plan profiles received a creation link.
+- Visible genuine trigger feedback: ORA-20015 (itinerary dates conflict with a member event), ORA-20023 (trip dates invalidate an itinerary), ORA-20033 (new event outside itinerary dates). Failed forms stayed open; stored dates/memberships did not change.
+- Dashboard after adding one repeated POI to a second itinerary: 2 itineraries, 6 unique POIs, 7 memberships, 3 Places, 2 Restaurants, 0 Activities, 1 Event, mean POI rating 4.82 across 5 reviewed unique POIs. Independent Oracle SELECTs matched.
+- Captured browser console logs were empty for errors/warnings. Earlier Phase 2 read-only checks covered all six screens/counts, guest prompting, profile statistics, city filtering and mobile profile/navigation controls without horizontal overflow.
+- Browser verification found and fixed the collection loading-state crash and date-of-birth input handling; actual paths were rechecked successfully.
+- Restored Meera, removed the two recorded temporary profiles and all their dependent test rows, then verified counts and SHA-256 hashes for all 25 tables against the original pre-test baseline. No DDL or administrative SQL was run. Sequence advancement is expected.
 
-The historical results below describe earlier runs and do not supersede these Phase 2 limits.
+Full test distinctions and cleanup evidence: [backend/TESTING.md](../backend/TESTING.md). Browser screenshots and hash-only audit evidence are stored separately in the ChatGPT workspace. These are functional checks of the local classroom profile switcher; there is no authenticated identity verification or load/security audit.
+
+The historical results below describe earlier runs.
 
 ## Live integration — 8 October 2026
 

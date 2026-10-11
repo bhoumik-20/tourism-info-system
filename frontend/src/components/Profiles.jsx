@@ -54,7 +54,7 @@ export function ProfileForm({ item, onClose }) {
       <div className="form-row"><label>First name<input required maxLength={50} autoComplete="given-name" {...field('firstName')}/></label><label>Middle name<input maxLength={50} autoComplete="additional-name" {...field('middleName')}/></label></div>
       <label>Last name<input maxLength={50} autoComplete="family-name" {...field('lastName')}/></label>
       <label>Email<input required type="email" maxLength={150} autoComplete="email" {...field('email')}/></label>
-      <div className="form-row"><label>Phone number<input type="tel" maxLength={20} autoComplete="tel" {...field('phoneNumber')}/></label><label>Date of birth<input type="date" autoComplete="bday" {...field('dateOfBirth')}/></label></div>
+      <div className="form-row"><label>Phone number<input type="tel" maxLength={20} autoComplete="tel" {...field('phoneNumber')}/></label><label>Date of birth<input type="date" autoComplete="bday" {...field('dateOfBirth')} onInput={field('dateOfBirth').onChange}/></label></div>
       <label>Profile image URL<input type="url" maxLength={500} placeholder="https://example.com/photo.jpg" {...field('profileImage')}/></label>
       <ErrorMessage>{error}</ErrorMessage>
       <div className="modal-actions"><button type="button" className="button secondary" disabled={pending} onClick={onClose}>Cancel</button><button className="button primary" disabled={pending}>{pending ? 'Saving…' : item ? 'Save profile' : 'Create and select profile'}</button></div>

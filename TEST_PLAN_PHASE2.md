@@ -19,3 +19,7 @@ No write tests run until the user approves this plan. `test:read` uses GET/SELEC
 - No DDL, GRANT, seed, migration or installation script is executed.
 
 The same approval also covers browser checks using newly created VoyageBrowserTest profiles at example.invalid, their own Planned trips, dated itineraries, reviews, saves and memberships. Browser fixture IDs are recorded for equivalent cleanup and hash verification. No completed browser trip is created. Run while nobody else is modifying the demonstration database.
+
+## Approved execution
+
+The user approved this plan on 12 October 2026. The 15 backend tests and browser write checks completed successfully, temporary fixtures were removed, and all 25 tables matched their original counts and data hashes. See [backend/TESTING.md](backend/TESTING.md) for executed coverage and limitations. This records that execution; the flag alone does not authorize unrelated future database writes.

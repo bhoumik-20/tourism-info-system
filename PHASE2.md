@@ -51,7 +51,9 @@ The query isolates the user's trip itineraries, counts memberships using LEFT JO
 
 ## Verification
 
-See [backend/TESTING.md](backend/TESTING.md) for actual execution results and [TEST_PLAN_PHASE2.md](TEST_PLAN_PHASE2.md) for live fixture/cleanup approval details. Frontend unit tests use only offline data; read-only backend tests use real Oracle GET/SELECT operations. Write tests are guarded and must be approved before execution.
+Verified on 12 October 2026 after explicit user approval: 15 live Oracle/Express tests, 14 offline frontend tests and the production build passed. Browser checks covered profile create/edit/persistence/isolation, review/save ownership, additions from every collection, duplicate prevention, genuine trigger feedback and dashboard refresh. Independent SELECTs matched browser writes and counts. Cleanup restored all 25 table counts and SHA-256 hashes to the original baseline; sequence values advance normally.
+
+See [backend/TESTING.md](backend/TESTING.md) for exact HTTP versus direct-Oracle trigger coverage and [TEST_PLAN_PHASE2.md](TEST_PLAN_PHASE2.md) for fixture/cleanup details. Write suites remain guarded for future runs. No additional manual database work is required on the verified installation.
 
 No new dependency, authentication framework, ORM, Docker, Redis, migration or seed system is used. The local SQL*Plus spool and handout remain ignored and unmodified. Profiles can be edited, but no profile-deletion endpoint is added. Completed-trip locking is intentionally irreversible through the normal app, following the installed triggers.
 
@@ -127,3 +129,12 @@ Files added/modified in Phase 2 (existing configuration and SQL reference files 
 - `frontend/test/collections.test.js`
 - `frontend/test/filters.test.js`
 - `frontend/test/profiles.test.js`
+
+## Git checkpoints
+
+- `37608d4` — persistent traveler profiles and selected-user ownership.
+- `eacc5b6` — live curated collections, itinerary actions, trigger mapping and trip dashboard.
+- `70a12a6` — collection navigation loading fix and read-only browser evidence.
+- Final follow-up — profile birth-date input fix and approved live-write/browser verification notes (see repository history for its generated commit ID).
+
+The existing monorepo is used throughout. Local credentials, original transcripts, manual handouts and spooled SQL are not published.
