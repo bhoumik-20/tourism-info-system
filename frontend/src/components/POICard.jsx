@@ -13,11 +13,12 @@ import { typeLabels } from "../services/catalog";
 import { Photo, Rating, money, dateLabel, ErrorMessage } from "./UI";
 
 export function SaveButton({ poi, compact = false }) {
-  const { data, userId, act } = useApp();
+  const { data, userId, act, requireProfile } = useApp();
   const saved = data.saved.includes(poi.poiId);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   async function toggle() {
+    if (!requireProfile()) return;
     setPending(true);
     setError("");
     try {

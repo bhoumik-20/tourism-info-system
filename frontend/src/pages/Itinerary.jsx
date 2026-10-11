@@ -21,6 +21,7 @@ import {
   SearchBar,
 } from "../components/UI";
 import PlanForm from "../components/PlanForm";
+import { ProfilePrompt } from "../components/Profiles";
 
 export function AddPoiModal({ itinerary, onClose }) {
   const { data, userId, act } = useApp();
@@ -123,6 +124,7 @@ export function AddToItinerary({ poi, onClose }) {
       setPending(false);
     }
   }
+  if (!userId) return <Modal title="Select a profile first" onClose={onClose}><ProfilePrompt/></Modal>;
   return (
     <Modal title="Add to an itinerary" onClose={onClose}>
       {data.itineraries.length ? (
@@ -177,6 +179,7 @@ export default function Itinerary() {
   const [modal, setModal] = useState(""),
     [error, setError] = useState(""),
     [pending, setPending] = useState(null);
+  if (!userId) return <ProfilePrompt/>;
   if (!itinerary)
     return (
       <EmptyState

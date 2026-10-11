@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { Bookmark, ArrowRight } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import POICard from "../components/POICard";
+import { ProfilePrompt } from "../components/Profiles";
 import { EmptyState } from "../components/UI";
 export default function Saved() {
-  const { data } = useApp();
+  const { data, userId } = useApp();
+  if (!userId) return <ProfilePrompt/>;
   const pois = data.catalog.filter((p) => data.saved.includes(p.poiId));
   return (
     <div className="container saved-page">

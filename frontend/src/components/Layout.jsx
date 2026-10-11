@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { Compass, Menu, X, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { EmptyState, Loading } from "./UI";
+import { ProfileControl, ProfileDialogs } from "./Profiles";
 
 const navigation = [
   ["/", "Home"],
@@ -45,32 +46,7 @@ export default function Layout() {
               </NavLink>
             ))}
           </nav>
-          <div className="nav-user">
-            <span className="avatar">
-              {data?.users
-                .find((u) => u.userId === userId)
-                ?.firstName?.slice(0, 1) || "V"}
-            </span>
-            <label className="sr-only" htmlFor="demo-user">
-              Current traveler
-            </label>
-            <select
-              id="demo-user"
-              aria-label="Current traveler"
-              value={userId}
-              onChange={(e) => setUserId(Number(e.target.value))}
-              disabled={!data || loading}
-            >
-              {(data?.users || [{ userId: 1, firstName: "Demo traveler" }]).map(
-                (u) => (
-                  <option key={u.userId} value={u.userId}>
-                    {u.firstName}
-                    {u.lastName ? ` ${u.lastName}` : ""}
-                  </option>
-                ),
-              )}
-            </select>
-          </div>
+          <div className="nav-user"><ProfileControl /></div>
           <button
             className="icon-button mobile-menu"
             aria-label={menu ? "Close navigation" : "Open navigation"}
@@ -91,7 +67,7 @@ export default function Layout() {
         ) : !data ? (
           <Loading />
         ) : (
-          <Outlet />
+          <Outlet key={userId || "guest"} />
         )}
       </main>
       <footer className="footer">
@@ -128,6 +104,7 @@ export default function Layout() {
           </div>
         </div>
       </footer>
+      <ProfileDialogs />
       {toast && (
         <div className="toast" role="status">
           <CheckCircle2 size={18} />

@@ -1,7 +1,7 @@
 import { createMockRepository } from "./mockRepository.js";
 import { planBody } from "./catalog.js";
 
-export const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA !== "false";
+export const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === "true";
 const BASE = (
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"
 ).replace(/\/$/, "");
@@ -78,14 +78,11 @@ const live = {
         }),
       ),
     ]);
-    const selectedUser = users.some((u) => u.userId === userId)
-      ? userId
-      : users[0]?.userId;
-    if (!selectedUser) throw new Error("No demo users exist in the database.");
+    const selectedUser = users.some((u) => u.userId === userId) ? userId : null;
     const [saved, trips, itineraries] = await Promise.all([
-      readAll(`/users/${selectedUser}/saved-pois`),
-      readAll(`/users/${selectedUser}/trips`),
-      readAll(`/users/${selectedUser}/itineraries`),
+      selectedUser ? readAll(`/users/${selectedUser}/saved-pois`) : [],
+      selectedUser ? readAll(`/users/${selectedUser}/trips`) : [],
+      selectedUser ? readAll(`/users/${selectedUser}/itineraries`) : [],
     ]);
     const catalog = lists.flat().map((p) => ({
       ...p,
@@ -142,10 +139,13 @@ const live = {
       {
         rating: Number(body.rating),
         comments: body.comments?.trim() || null,
-        ...(!reviewId ? { userId } : {}),
+        userId,
       },
     ),
-  deleteReview: (reviewId) => request(`/reviews/${reviewId}`, "DELETE"),
+  deleteReview: (reviewId, userId) => request(`/reviews/${reviewId}?userId=${userId}`, "DELETE"),
+  getProfile: userId => request(`/users/${userId}`),
+  createProfile: body => request("/users", "POST", body),
+  updateProfile: (userId, body) => request(`/users/${userId}`, "PUT", body),
 };
 let storage;
 try {

@@ -13,6 +13,7 @@ import {
 import { api } from "../services/api";
 import { useApp } from "../context/AppContext";
 import PlanForm from "../components/PlanForm";
+import { ProfilePrompt } from "../components/Profiles";
 import DeleteDialog from "../components/DeleteDialog";
 import { EmptyState, dateLabel } from "../components/UI";
 
@@ -71,6 +72,7 @@ export function Trips() {
   const navigate = useNavigate();
   const [edit, setEdit] = useState(null),
     [remove, setRemove] = useState(null);
+  if (!userId) return <ProfilePrompt/>;
   return (
     <div className="container plans-page">
       <div className="page-heading heading-with-action">
@@ -149,6 +151,7 @@ export function TripDetail() {
   );
   const [form, setForm] = useState(null),
     [remove, setRemove] = useState(null);
+  if (!userId) return <ProfilePrompt/>;
   if (!trip)
     return (
       <EmptyState

@@ -7,3 +7,7 @@ node_modules/
 coverage/
 test-results.local.json
 database/tourism_db_implementation.txt
+
+# Local SQL handoffs and spooled reference material remain private.
+database/views_triggers_spool.txt
+handout.md

@@ -4,13 +4,17 @@ const catalog = require('../controllers/catalog');
 const reviews = require('../controllers/reviews');
 const plans = require('../controllers/plans');
 const db = require('../config/database');
+const users = require('../controllers/users');
 router.get('/health', async (req, res) => {
   await db.read(c => c.execute('SELECT 1 FROM DUAL'));
   res.json({ status: 'ok', database: 'connected' });
 });
 router.get('/cities', catalog.cities);
 router.get('/cities/:id', catalog.city);
-router.get('/users', catalog.users);
+router.get('/users', users.list);
+router.post('/users', users.create);
+router.get('/users/:userId', users.detail);
+router.put('/users/:userId', users.update);
 for (const resource of ['pois', 'places', 'restaurants', 'activities', 'events']) {
   router.get(`/${resource}`, catalog.list(resource));
   router.get(`/${resource}/:id`, catalog.detail(resource));

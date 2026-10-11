@@ -80,10 +80,10 @@ function ReviewForm({ poi, item, onClose }) {
   );
 }
 export default function Reviews({ poi }) {
-  const { userId, revision, act } = useApp();
+  const { userId, revision, act, requireProfile } = useApp();
   const result = useAsync(
     () => api.getReviews(poi.poiId),
-    [poi.poiId, revision],
+    [poi.poiId, revision, userId],
   );
   const [edit, setEdit] = useState(null),
     [remove, setRemove] = useState(null);
@@ -95,7 +95,7 @@ export default function Reviews({ poi }) {
           <h2>Little stories from real visits</h2>
           <Rating value={poi.averageRating} count={poi.reviewCount} />
         </div>
-        <button className="button secondary" onClick={() => setEdit({})}>
+        <button className="button secondary" onClick={() => requireProfile() && setEdit({})}>
           <Plus size={16} />
           Write a review
         </button>

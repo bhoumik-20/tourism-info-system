@@ -16,6 +16,7 @@ export function createMockRepository(storage) {
   } catch {
     /* Missing or corrupt storage starts a fresh demo. */
   }
+  state.users ||= structuredClone(users);
   const mutate = (fn) => {
     const next = structuredClone(state);
     const value = fn(next);
@@ -51,13 +52,37 @@ export function createMockRepository(storage) {
     async bootstrap(userId) {
       return structuredClone({
         cities,
-        users,
+        users: state.users,
         catalog: catalog(),
         saved: state.saved
           .filter((p) => p.userId === userId)
           .map((p) => p.poiId),
         trips: plans("trips", userId),
         itineraries: plans("itineraries", userId).map(withPois),
+      });
+    },
+
+    async getProfile(userId) {
+      const user = requireItem(state.users, u => u.userId === userId);
+      return structuredClone({ ...user,
+        reviewCount: state.reviews.filter(r => r.userId === userId).length,
+        savedPoiCount: state.saved.filter(s => s.userId === userId).length,
+        tripCount: plans('trips', userId).length,
+        itineraryCount: plans('itineraries', userId).length,
+      });
+    },
+    async createProfile(body) {
+      return mutate(next => {
+        if (next.users.some(u => u.email === body.email)) throw new Error('This email address is already in use.');
+        const user = { ...body, userId: Math.max(0, ...next.users.map(u => u.userId)) + 1 };
+        next.users.push(user); return user;
+      });
+    },
+    async updateProfile(userId, body) {
+      return mutate(next => {
+        if (next.users.some(u => u.userId !== userId && u.email === body.email)) throw new Error('This email address is already in use.');
+        const user = requireItem(next.users, u => u.userId === userId);
+        Object.assign(user, body); return user;
       });
     },
     async listPois(resource = "pois", filters = {}) {
@@ -74,12 +99,12 @@ export function createMockRepository(storage) {
     async getReviews(poiId) {
       return state.reviews
         .filter((r) => r.poiId === Number(poiId))
-        .map((r) => ({ ...r, ...users.find((u) => u.userId === r.userId) }))
+        .map((r) => ({ ...r, ...state.users.find((u) => u.userId === r.userId) }))
         .sort((a, b) => b.reviewId - a.reviewId);
     },
     async savePoi(userId, poiId, save) {
       return mutate((next) => {
-        requireItem(users, (u) => u.userId === userId);
+        requireItem(state.users, (u) => u.userId === userId);
         requireItem(pois, (p) => p.poiId === poiId);
         const check = (p) => p.userId === userId && p.poiId === poiId;
         if (save && next.saved.some(check))
@@ -92,7 +117,7 @@ export function createMockRepository(storage) {
     async writePlan(kind, userId, number, form) {
       const body = planBody(form, kind);
       return mutate((next) => {
-        requireItem(users, (u) => u.userId === userId);
+        requireItem(state.users, (u) => u.userId === userId);
         if (kind === "itineraries")
           requireItem(
             next.trips,
@@ -174,7 +199,7 @@ export function createMockRepository(storage) {
       if (new TextEncoder().encode(comments || "").length > 1000)
         throw new Error("The review is too long.");
       return mutate((next) => {
-        requireItem(users, (u) => u.userId === userId);
+        requireItem(state.users, (u) => u.userId === userId);
         requireItem(pois, (p) => p.poiId === poiId);
         if (reviewId) {
           const item = requireItem(

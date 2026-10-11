@@ -83,6 +83,7 @@ export default function PlanForm({
           <label>
             Start date
             <input
+              required={kind === "itineraries"}
               type="date"
               {...field("startDate")}
               onInput={field("startDate").onChange}
@@ -91,6 +92,7 @@ export default function PlanForm({
           <label>
             End date
             <input
+              required={kind === "itineraries"}
               type="date"
               min={form.startDate || undefined}
               {...field("endDate")}
