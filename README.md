@@ -1,9 +1,10 @@
-# Tourism Information System
+# Voyage — Tourism Information System
 
-BACSE202 Database Systems mini-project. Node.js + Express + raw Oracle SQL against the existing local TOURISM schema in Oracle XE 11g.
+BACSE202 Database Systems project: React/Vite/Tailwind frontend, Express backend, and readable bound SQL against the existing populated Oracle XE 11g TOURISM schema. This is a local classroom profile switcher without authentication.
 
-- `backend/`: REST API, setup, and integration tests. See [backend/README.md](backend/README.md).
-- `database/`: existing course implementation reference and connectivity notes.
-- `frontend/`: Voyage React + Vite + Tailwind tourism UI, demo CRUD and prepared API integration. See [frontend/README.md](frontend/README.md).
+- `backend/`: REST API and live Oracle checks. [Setup and endpoints](backend/README.md).
+- `frontend/`: Voyage discovery, profiles, curated collections, reviews, saves, trips, itineraries and trip dashboard. [Run and routes](frontend/README.md).
+- `database/`: existing course reference material; no automatic schema installation.
+- [Phase 2 implementation](PHASE2.md), [live-write test plan](TEST_PLAN_PHASE2.md).
 
-Credentials, dependencies, and the existing SQL*Plus transcript are excluded from Git. The populated database is local and is not bundled with this repository.
+Start the backend on localhost:5000 and frontend on localhost:5173 in separate terminals. Use the existing local `.env` files; never commit passwords. Oracle credentials belong only in the backend. Dependencies, build output, credentials, and local SQL*Plus handouts/spools are ignored. No tables or database objects are created or altered by the application.

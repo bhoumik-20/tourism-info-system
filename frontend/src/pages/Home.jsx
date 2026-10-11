@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import POICard from "../components/POICard";
+import CollectionsSection from "../components/CollectionsSection";
 import { SearchBar, Photo } from "../components/UI";
 
 const categories = [
@@ -176,6 +177,7 @@ export default function Home() {
           ))}
         </div>
       </section>
+      <CollectionsSection/>
       <section className="planning-banner">
         <span className="planning-icon">
           <Route size={31} />

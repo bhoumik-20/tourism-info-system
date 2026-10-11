@@ -10,8 +10,9 @@
     "check:db": "node --env-file=.env scripts/check-db.js",
     "start": "node --env-file=.env server.js",
     "dev": "node --env-file=.env --watch server.js",
-    "test": "node --env-file=.env --test --test-concurrency=1 test/integration.test.js",
-    "check:schema": "node --env-file=.env scripts/check-schema.js"
+    "test": "node --env-file=.env --test --test-concurrency=1 test/*.test.js",
+    "check:schema": "node --env-file=.env scripts/check-schema.js",
+    "test:read": "node --env-file=.env --test test/read-only.test.js"
   },
   "dependencies": {
     "oracledb": "6.10.0",

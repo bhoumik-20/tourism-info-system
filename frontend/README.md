@@ -13,7 +13,7 @@ Copy-Item .env.example .env
 npm run dev
 ```
 
-Open **http://localhost:5173**. `npm run build` produces an ignored `dist/` folder. `npm run preview` serves it at **http://localhost:4173**. `npm test` runs the demo-domain tests without touching Oracle.
+Open **http://localhost:5173**. `npm run build` produces an ignored `dist/` folder. `npm run preview` serves it at **http://localhost:4173**. `npm test` runs the offline domain, profile persistence and collection-normalization tests without touching Oracle.
 
 ## Design reference
 
@@ -23,14 +23,14 @@ The Stitch screens/export were inaccessible during implementation. This is an im
 
 ## Data and backend
 
-The default is **demo mode**. `src/data/mockData.js` centralizes 24 POIs, two cities, two demo users, reviews, saved POIs, trips and itineraries. Changes persist under `voyage-tis-demo-v1` in browser localStorage. Demonstration fees, hours, ratings and event dates are illustrative.
-
-To use the existing Oracle backend, configure a local `.env`:
+The default is **live Oracle mode**. Configure the local frontend `.env` (no database passwords):
 
 ```dotenv
 VITE_API_BASE_URL=http://localhost:5000/api
 VITE_USE_MOCK_DATA=false
 ```
+
+Explicit `VITE_USE_MOCK_DATA=true` enables the existing offline demonstration. Its changes persist separately under `voyage-tis-demo-v1`. Curated collections require the actual Oracle views and are intentionally unavailable in offline mode.
 
 Restart Vite after changing environment variables. Start the existing `../backend` following its README. Keep its `FRONTEND_ORIGIN=http://localhost:5173`. Do not put Oracle credentials in the frontend. Only variables prefixed with `VITE_` are exposed to client code.
 
@@ -47,10 +47,13 @@ Live integration was verified on 8 October 2026 against the existing Oracle XE d
 | `/restaurants` | Dining search and cuisine/price/service filters |
 | `/activities` | Activity type, difficulty, season and budget filters |
 | `/events` | Event type and overlapping date-range filters |
+| `/profile` | Active profile attributes, aggregate statistics and edit form |
+| `/collections` | All six curated collections with live counts |
+| `/collections/:slug` | Curated view rows, city/type filters, save and add-to-itinerary |
 | `/pois/:id` | Full subtype details, reviews, save and add-to-itinerary |
 | `/saved` | Current user's saved POIs |
 | `/trips` | Create/edit/delete trips |
-| `/trips/:tripNo` | Trip details and itinerary management |
+| `/trips/:tripNo` | Trip details, live summary dashboard and itinerary management |
 | `/itineraries/:id` | Edit itinerary, add/remove POI memberships |
 | `/credits` | Photography sources and licences |
 
@@ -64,4 +67,8 @@ Search and filters are stored in URL parameters. Unknown routes and missing reco
 - **SEARCH:** combine text, city, rating and subtype-specific filters.
 - **DISPLAY:** cards, subtype metadata, reviews, saved POIs and plans.
 
-A trip with itineraries cannot be deleted, matching the existing backend's FK rules. Itinerary POIs are shown by name: the database has no visit-order column, so no ordering or scheduling persistence is invented. No login or authentication is required; choose the current demo traveler in the header.
+A trip with itineraries cannot be deleted, matching the existing backend's FK rules. Itinerary POIs are shown by name: the database has no visit-order column, so no ordering or scheduling persistence is invented. No login or authentication is required. Select or create the active traveler using the top-right profile menu. The selected ID persists under `voyage-active-profile`; there is no automatic demo-user fallback. With no profile, user-owned actions open the profile selector.
+
+Switching clears the old profile data immediately, remounts user-owned forms, and discards late responses. Reviews, saved POIs, trips, itineraries and itinerary pickers use this shared ID. Profile statistics use Oracle aggregates. A successful write refreshes scoped data, curated counts and the live trip dashboard.
+
+Every curated card retains the original POI_ID and offers Save and Add to Itinerary. The picker shows the active traveler's real trips and their itineraries; existing memberships are disabled. If none exist, it links to trip/itinerary creation. The API writes only ITINERARY_POI, never a view or a duplicate POI. Trigger conflicts appear as readable feedback. The profile switcher does not provide secure authentication.

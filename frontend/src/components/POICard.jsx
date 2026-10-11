@@ -10,6 +10,9 @@ import {
 import { useApp } from "../context/AppContext";
 import { api } from "../services/api";
 import { typeLabels } from "../services/catalog";
+import { collectionPrice } from "../services/collections";
+import { AddToItinerary } from "../pages/Itinerary";
+import { Plus } from "lucide-react";
 import { Photo, Rating, money, dateLabel, ErrorMessage } from "./UI";
 
 export function SaveButton({ poi, compact = false }) {
@@ -51,14 +54,16 @@ export function SaveButton({ poi, compact = false }) {
   );
 }
 export default function POICard({ poi }) {
-  const metadata =
+  const [add, setAdd] = useState(false);
+  const { requireProfile } = useApp();
+  const metadata = collectionPrice(poi, money) || (
     poi.type === "restaurants"
       ? poi.priceRange || "Dining"
       : poi.type === "activities"
         ? `${money(poi.cost)} · ${poi.duration || "Flexible duration"}`
         : poi.type === "events"
           ? dateLabel(poi.startDate)
-          : money(poi.entryFee);
+          : money(poi.entryFee));
   return (
     <article className="poi-card">
       <div className="card-image">
@@ -97,7 +102,10 @@ export default function POICard({ poi }) {
           </span>
           <SaveButton poi={poi} compact />
         </div>
+        {(poi.saveCount !== undefined || poi.popularityScore !== undefined || poi.eventStatus || poi.cuisines?.length) && <p className="collection-metadata">{poi.cuisines?.join(' · ')}{poi.saveCount !== undefined && ` ${poi.saveCount} saves`}{poi.popularityScore !== undefined && ` · Score ${poi.popularityScore}`}{poi.eventStatus && ` ${poi.eventStatus}`}</p>}
+        <button className="button secondary small card-add" aria-label={`Add ${poi.name} to itinerary`} onClick={() => requireProfile() && setAdd(true)}><Plus size={15}/>Add to Itinerary</button>
       </div>
+      {add && <AddToItinerary poi={poi} onClose={() => setAdd(false)}/>}
     </article>
   );
 }

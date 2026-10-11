@@ -8,6 +8,7 @@ import { ProfileControl, ProfileDialogs } from "./Profiles";
 const navigation = [
   ["/", "Home"],
   ["/explore", "Explore"],
+  ["/collections", "Collections"],
   ["/restaurants", "Restaurants"],
   ["/activities", "Activities"],
   ["/events", "Events"],

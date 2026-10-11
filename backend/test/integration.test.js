@@ -35,6 +35,7 @@ async function snapshot() {
   });
 }
 before(async () => {
+  if (process.env.VOYAGE_LIVE_TESTS_APPROVED !== '1') throw new Error('Live write tests require user approval of TEST_PLAN_PHASE2.md.');
   await db.initialize();
   original = await snapshot();
   fixture = await db.read(async c => {
@@ -127,14 +128,14 @@ test('reviews insert/update/delete are committed and ratings are derived from li
   const id = result.data.reviewId; created.reviews.add(id);
   let list = await request('GET', `/pois/${fixture.poiId}/reviews?limit=100`);
   assert.ok(list.data.some(row => row.reviewId === id && row.rating === 4.5));
-  const changed = await request('PUT', `/reviews/${id}`, { rating: 3, comments: 'Updated test review' });
+  const changed = await request('PUT', `/reviews/${id}?userId=${fixture.userId}`, { userId: fixture.userId, rating: 3, comments: 'Updated test review' });
   assert.equal(changed.data.rating, 3); assert.ok(changed.data.lastUpdated);
   const rating = await db.read(c => v.one(c, 'SELECT ROUND(AVG(Rating), 2) AS Average_Rating, COUNT(*) AS Review_Count FROM REVIEW WHERE POI_ID = :poiId', { poiId: fixture.poiId }));
   const detail = (await request('GET', `/pois/${fixture.poiId}`)).data;
   assert.equal(detail.averageRating, rating.averageRating); assert.equal(detail.reviewCount, rating.reviewCount);
-  await request('DELETE', `/reviews/${id}`, undefined, 204); created.reviews.delete(id);
-  await request('PUT', `/reviews/${id}`, { rating: 2 }, 404);
-  await request('DELETE', `/reviews/${id}`, undefined, 404);
+  await request('DELETE', `/reviews/${id}?userId=${fixture.userId}`, undefined, 204); created.reviews.delete(id);
+  await request('PUT', `/reviews/${id}?userId=${fixture.userId}`, { userId: fixture.userId, rating: 2 }, 404);
+  await request('DELETE', `/reviews/${id}?userId=${fixture.userId}`, undefined, 404);
 });
 
 test('saved POIs preserve existing associations and reject duplicates', async () => {
@@ -158,13 +159,13 @@ test('trip and itinerary lifecycle, composite keys, POI membership, and dependen
   created.trips.add(trip.tripNo);
   const tripPath = `${prefix}/trips/${trip.tripNo}`;
   assert.equal((await request('GET', tripPath)).data.startDate, '2026-10-20');
-  assert.equal((await request('PUT', tripPath, { tripName: 'Updated backend test trip', status: 'Completed' })).data.status, 'Completed');
+  assert.equal((await request('PUT', tripPath, { tripName: 'Updated backend test trip', status: 'Ongoing', startDate: '2026-10-20', endDate: '2026-10-22' })).data.status, 'Ongoing');
   const itinerary = (await request('POST', `${prefix}/itineraries`, { itineraryName: 'Backend test day', tripNo: trip.tripNo, startDate: '2026-10-21', endDate: '2026-10-21' }, 201)).data;
   created.itineraries.add(itinerary.itineraryNo);
   const itineraryPath = `${prefix}/itineraries/${itinerary.itineraryNo}`;
   assert.equal((await request('GET', itineraryPath)).data.tripNo, trip.tripNo);
   assert.ok((await request('GET', `${prefix}/itineraries?tripNo=${trip.tripNo}`)).data.some(row => row.itineraryNo === itinerary.itineraryNo));
-  await request('PUT', itineraryPath, { itineraryName: 'Updated backend test day', tripNo: trip.tripNo });
+  await request('PUT', itineraryPath, { itineraryName: 'Updated backend test day', tripNo: trip.tripNo, startDate: '2026-10-21', endDate: '2026-10-21' });
   const member = `${itineraryPath}/pois/${fixture.poiId}`;
   await request('POST', member, undefined, 201); await request('POST', member, undefined, 409);
   assert.ok((await request('GET', itineraryPath)).data.pois.some(row => row.poiId === fixture.poiId));

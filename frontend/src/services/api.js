@@ -1,5 +1,6 @@
 import { createMockRepository } from "./mockRepository.js";
 import { planBody } from "./catalog.js";
+import { normalizeCollectionPoi } from "./collections.js";
 
 export const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === "true";
 const BASE = (
@@ -18,8 +19,10 @@ async function request(path, method = "GET", body) {
     });
     if (response.status === 204) return null;
     const payload = await response.json();
-    if (!response.ok)
-      throw new Error(payload.error || `Request failed (${response.status}).`);
+    if (!response.ok) {
+      const error = new Error(payload.error || `Request failed (${response.status}).`);
+      error.code = payload.code; error.status = response.status; throw error;
+    }
     return payload.data;
   } catch (error) {
     if (error.name === "AbortError")
@@ -143,6 +146,9 @@ const live = {
       },
     ),
   deleteReview: (reviewId, userId) => request(`/reviews/${reviewId}?userId=${userId}`, "DELETE"),
+  getCollections: () => request('/collections'),
+  getCollection: async (slug, filters = {}) => (await readAll(`/collections/${slug}`, filters)).map(normalizeCollectionPoi),
+  getTripSummary: (userId, tripNo) => request(`/users/${userId}/trips/${tripNo}/summary`),
   getProfile: userId => request(`/users/${userId}`),
   createProfile: body => request("/users", "POST", body),
   updateProfile: (userId, body) => request(`/users/${userId}`, "PUT", body),

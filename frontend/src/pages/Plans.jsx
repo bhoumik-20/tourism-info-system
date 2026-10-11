@@ -14,6 +14,7 @@ import { api } from "../services/api";
 import { useApp } from "../context/AppContext";
 import PlanForm from "../components/PlanForm";
 import { ProfilePrompt } from "../components/Profiles";
+import TripSummary from "../components/TripSummary";
 import DeleteDialog from "../components/DeleteDialog";
 import { EmptyState, dateLabel } from "../components/UI";
 
@@ -197,6 +198,7 @@ export function TripDetail() {
           </button>
         </div>
       </div>
+      <TripSummary tripNo={trip.tripNo}/>
       <div className="section-heading">
         <div>
           <p className="eyebrow">MAKE ROOM FOR DISCOVERY</p>

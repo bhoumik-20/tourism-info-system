@@ -127,6 +127,7 @@ export default function PlanForm({
             </select>
           </label>
         )}
+        {kind === 'trips' && form.status.trim().toUpperCase() === 'COMPLETED' && item?.status?.trim().toUpperCase() !== 'COMPLETED' && <p className="error-message">Completing a trip makes it, its itineraries and POI memberships read-only.</p>}
         <ErrorMessage>{error}</ErrorMessage>
         <div className="modal-actions">
           <button

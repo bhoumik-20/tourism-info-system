@@ -5,10 +5,15 @@ const reviews = require('../controllers/reviews');
 const plans = require('../controllers/plans');
 const db = require('../config/database');
 const users = require('../controllers/users');
+const collections = require('../controllers/collections');
+const summary = require('../controllers/summary');
 router.get('/health', async (req, res) => {
   await db.read(c => c.execute('SELECT 1 FROM DUAL'));
   res.json({ status: 'ok', database: 'connected' });
 });
+router.get('/collections', collections.list);
+router.get('/collections/:slug', collections.detail);
+router.get('/users/:userId/trips/:tripNo/summary', summary.detail);
 router.get('/cities', catalog.cities);
 router.get('/cities/:id', catalog.city);
 router.get('/users', users.list);

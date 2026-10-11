@@ -16,6 +16,7 @@ import { Trips, TripDetail } from "./pages/Plans";
 import Itinerary from "./pages/Itinerary";
 import Credits from "./pages/Credits";
 import Profile from "./pages/Profile";
+import Collections from "./pages/Collections";
 import { EmptyState } from "./components/UI";
 
 function PageTitle() {
@@ -51,6 +52,8 @@ export default function App() {
               element={<Catalog key="events" resource="events" />}
             />
             <Route path="pois/:id" element={<PoiDetail />} />
+            <Route path="collections" element={<Collections />} />
+            <Route path="collections/:slug" element={<Collections />} />
             <Route path="profile" element={<Profile />} />
             <Route path="saved" element={<Saved />} />
             <Route path="trips" element={<Trips />} />

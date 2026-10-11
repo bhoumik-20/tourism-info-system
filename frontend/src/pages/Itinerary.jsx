@@ -105,6 +105,7 @@ export function AddPoiModal({ itinerary, onClose }) {
 }
 export function AddToItinerary({ poi, onClose }) {
   const { data, userId, act } = useApp();
+  const [tripNumber, setTripNumber] = useState("");
   const [number, setNumber] = useState(""),
     [error, setError] = useState(""),
     [pending, setPending] = useState(false);
@@ -130,6 +131,7 @@ export function AddToItinerary({ poi, onClose }) {
       {data.itineraries.length ? (
         <form className="form-stack" onSubmit={submit}>
           <p className="muted">Make room for {poi.name}.</p>
+          <label>Trip<select required value={tripNumber} onChange={e => { setTripNumber(e.target.value); setNumber(''); }}><option value="">Choose a trip</option>{data.trips.map(t => <option key={t.tripNo} value={t.tripNo}>{t.tripName}{t.status?.trim().toUpperCase() === 'COMPLETED' ? ' · Completed' : ''}</option>)}</select></label>
           <label>
             Itinerary
             <select
@@ -138,7 +140,7 @@ export function AddToItinerary({ poi, onClose }) {
               onChange={(e) => setNumber(e.target.value)}
             >
               <option value="">Choose an itinerary</option>
-              {data.itineraries.map((i) => (
+              {data.itineraries.filter(i => i.tripNo === Number(tripNumber)).map((i) => (
                 <option
                   value={i.itineraryNo}
                   key={i.itineraryNo}
@@ -152,6 +154,7 @@ export function AddToItinerary({ poi, onClose }) {
               ))}
             </select>
           </label>
+          {tripNumber && !data.itineraries.some(i => i.tripNo === Number(tripNumber)) && <p className="muted">This trip has no itineraries. <Link to={`/trips/${tripNumber}`} onClick={onClose}>Open trip to create one</Link>.</p>}
           <ErrorMessage>{error}</ErrorMessage>
           <div className="modal-actions">
             <button className="button primary" disabled={pending}>

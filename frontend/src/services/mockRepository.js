@@ -62,6 +62,23 @@ export function createMockRepository(storage) {
       });
     },
 
+
+    async getCollections() { throw new Error('Curated collections require a live Oracle connection.'); },
+    async getCollection() { throw new Error('Curated collections require a live Oracle connection.'); },
+    async getTripSummary(userId, tripNo) {
+      const trip = requireItem(state.trips,t=>t.userId===userId && t.tripNo===Number(tripNo));
+      const items = plans('itineraries',userId).filter(i=>i.tripNo===trip.tripNo);
+      const ids = new Set(items.flatMap(i=>i.poiIds));
+      const records = catalog().filter(p=>ids.has(p.poiId));
+      const reviewed=records.filter(p=>p.averageRating!==null);
+      return { ...trip,itineraryCount:items.length,uniquePoiCount:ids.size,
+        membershipCount:items.reduce((n,i)=>n+i.poiIds.length,0),
+        placeCount:records.filter(p=>p.type==='places').length,
+        restaurantCount:records.filter(p=>p.type==='restaurants').length,
+        activityCount:records.filter(p=>p.type==='activities').length,
+        eventCount:records.filter(p=>p.type==='events').length,
+        reviewedPoiCount:reviewed.length,averageRating:reviewed.length?reviewed.reduce((n,p)=>n+p.averageRating,0)/reviewed.length:null };
+    },
     async getProfile(userId) {
       const user = requireItem(state.users, u => u.userId === userId);
       return structuredClone({ ...user,
