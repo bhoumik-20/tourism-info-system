@@ -17,14 +17,16 @@ Phase 2 was committed and pushed through `bbbd40a` (profile birth-date input and
 
 The prior approved live test run passed 15 backend tests and verified browser workflows. Temporary records were removed and counts/data fingerprints across all 25 tables matched the baseline. Those results are documented in `backend/TESTING.md`, `frontend/VERIFICATION.md` and `PHASE2.md`. Hosting tests below are a separate verification scope.
 
-## Sites team website — deployment in progress
+## Sites team website — live and public
 
 - Registered Site ID: `appgprj_6acbdcadf36c81918d1effeb0663c72d`.
-- Assigned URL: https://voyage-tourism-team.blondmoth32.chatgpt.site
+- Live URL: https://voyage-tourism-team.blondmoth32.chatgpt.site
 - Manual checklist route: `/team-testing`.
-- Current audience: owner-private; team sharing choice still pending.
-- Publication is not yet verified. Source synchronization and packaging are being completed before deployment.
+- Current audience: public, explicitly approved by the owner for anyone with the link. No ChatGPT sign-in is required.
+- Saved version: **1**, deployed successfully on 12 October 2026 at 08:49 UTC with the current live connection settings. Access was changed to public at 08:52 UTC.
 - The user approved a protected temporary Cloudflare tunnel for live application reads and writes. The gateway/tunnel are running; Oracle and Express remain on the owner's PC.
+- Sites source commit: `ab489a43c2d3facff9a2f1661b0d52ef70fd4f96`. Successful deployment: `appgdep_6acc9f1afe848191a8059d5bbe6e81ee` (runtime environment revision 2).
+- GitHub implementation checkpoint: `c0d188a` (protected Sites connection and team testing guide). The final documentation checkpoint is the commit containing this completed handoff.
 
 The connection is:
 
@@ -47,15 +49,19 @@ The tunnel is protected by a server-side random key. Sites holds it as a secret;
 
 The Sites source checkout is in the task workspace at `sites/voyage-team-review`. It retains `.openai/hosting.json` and the independent Sites source history. The downloaded executable, `.dev.vars`, backend `.env` and SQL handoffs are not published.
 
-## Verification so far
+## Verification completed on 12 October 2026
 
 - Existing backend read-only checks: `/api/health`, `/api/cities` and `/api/collections` returned HTTP 200; two cities and six collections were returned.
 - Protected tunnel: unauthenticated reads returned HTTP 401; authorized health/cities/collections reads returned HTTP 200.
 - Local hosted-app preview: homepage and team checklist loaded; the homepage displayed real Oracle POIs and all six collections.
 - Frontend plus hosting proxy suite: 17 tests passed. Proxy tests use simulated responses; they do not prove Oracle trigger execution.
-- Hosted frontend production build passed. The Cloudflare compatibility date is pinned to `2026-10-06`, supported by the installed runtime. Hosting dependencies were updated to patched versions; the resulting dependency audit reported zero known vulnerabilities.
+- Both the hosted frontend production build and the ordinary local frontend production build passed. The Cloudflare compatibility date is pinned to `2026-10-06`, supported by the installed runtime. Hosting dependencies were updated to patched versions; the resulting dependency audit reported zero known vulnerabilities.
 - No additional live Oracle write tests were run for hosting. The existing approved Phase 2 write/cleanup evidence remains in its testing documents.
-- Production deployment, production browser checks and final sharing are pending; do not treat the assigned URL as verified live until the deployment record below confirms it.
+- Three live Oracle SELECT-only tests passed: profile attributes/statistics, all six installed view results and filters, and independent dashboard calculations for all existing trips.
+- 35 production API comparisons passed: hosted responses and status codes matched the local backend for health, cities, POIs/subtypes, all five profiles and their saves/trips, all five trip summaries, collection listing and all six collection details. API responses used `Cache-Control: no-store`. These checks ran while the site was private through its supported server access credential.
+- After the public access change, anonymous production health and collection requests returned HTTP 200 with no-store responses. Sites reports audience `public`, status `active`, live URL and saved version 1.
+- Public browser checks displayed the real homepage, six collection counts, all five profiles, and Aarav's two trips after selecting him. Switching to Meera replaced that list with her own two trips, and her Mumbai Weekend dashboard displayed one itinerary, five unique POIs/five memberships, subtype counts and a mean rating of 4.38. The published six-step team guide loaded directly and its browser-local checklist persisted after reload; the check was then reset. Intermittent automatic-review service HTTP 429 failures delayed some interactions; a complete new browser CRUD run is not claimed.
+- Hosted create/edit/delete operations and trigger rejections are covered by proxy transport tests and prior local Phase 2 live tests, but were not newly executed through the public site. Teammates should use the guide for that manual verification.
 
 ## Run and stop team testing
 
@@ -78,8 +84,10 @@ Stopping disconnects the team website's live data while leaving Oracle and the e
 
 Use the `/team-testing` guide. Create a clearly named test profile, then check discovery, all collections, saves/reviews, Planned trips, itineraries and dashboard totals. Keep trips Planned during disposable tests: completed trips are locked by installed Oracle triggers. Coordinate profile cleanup with the project owner because there is no profile-delete endpoint.
 
-The navbar profile is authoritative for application ownership and persists in each browser. It is a classroom profile switcher, not authenticated identity verification. Whoever is allowed to visit the Site can select profiles and change shared records; choose the Site audience accordingly.
+The navbar profile is authoritative for application ownership and persists in each browser. It is a classroom profile switcher, not authenticated identity verification. The owner approved public access: anyone with the link can select profiles and change shared records. Coordinate tests and avoid editing another teammate's data.
 
 ## Progress log
 
-- 12 October: preserved the existing local handoff and began this current handoff. Resumed the same registered Site after an interrupted packaging step. Confirmed Oracle/backend and the approved tunnel are still running. Team access remains private pending the user's audience choice.
+- 12 October: preserved the existing local handoff and began this current handoff. Resumed the same registered Site after an interrupted packaging step. Confirmed Oracle/backend and the approved tunnel are still running. At that point, team access was private pending the user's audience choice.
+
+- 12 October: pushed `c0d188a` before publication. Replaced an expired temporary tunnel, kept the same registered Site and saved source version, and deployed version 1 with current runtime settings. Completed 35 production read comparisons, three direct Oracle read-only tests, frontend/proxy checks and both production builds. Applied the owner's explicit public-access choice and verified anonymous API access, browser profile switching, a real trip dashboard and the reload-persistent team checklist. No Oracle rows or schema objects were changed during the hosting verification.
