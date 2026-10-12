@@ -81,6 +81,7 @@ export default function Layout() {
             <p>Your next discovery starts here.</p>
           </div>
           <div className="footer-links">
+            <Link to="/team-testing">Team testing guide <ArrowUpRight size={14} /></Link>
             <Link to="/explore">
               Explore destinations <ArrowUpRight size={14} />
             </Link>

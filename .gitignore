@@ -11,3 +11,8 @@ database/tourism_db_implementation.txt
 # Local SQL handoffs and spooled reference material remain private.
 database/views_triggers_spool.txt
 handout.md
+
+# Team testing process state, credentials and portable client.
+hosting/.runtime/
+hosting/.env.team
+

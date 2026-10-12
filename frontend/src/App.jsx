@@ -17,6 +17,7 @@ import Itinerary from "./pages/Itinerary";
 import Credits from "./pages/Credits";
 import Profile from "./pages/Profile";
 import Collections from "./pages/Collections";
+import TeamTesting from "./pages/TeamTesting";
 import { EmptyState } from "./components/UI";
 
 function PageTitle() {
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="trips/:tripNo" element={<TripDetail />} />
             <Route path="itineraries/:id" element={<Itinerary />} />
             <Route path="credits" element={<Credits />} />
+            <Route path="team-testing" element={<TeamTesting />} />
             <Route
               path="*"
               element={

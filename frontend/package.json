@@ -7,7 +7,8 @@
     "dev": "vite --host localhost --port 5173 --strictPort",
     "build": "vite build",
     "preview": "vite preview --host localhost --port 4173 --strictPort",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "build:sites": "vite build --config vite.sites.config.js"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
@@ -17,9 +18,11 @@
     "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "1.63.1",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.2",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.3.3"
+    "vite": "^8.3.3",
+    "wrangler": "4.149.0"
   }
 }
