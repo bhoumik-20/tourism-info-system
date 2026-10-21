@@ -55,3 +55,14 @@ Hosting verification uses read-only Oracle requests. Local proxy tests use simul
 ## Published verification
 
 On 12 October 2026, 35 read-only hosted API responses matched the local backend, three direct Oracle read-only tests passed, 17 frontend/proxy tests passed, and hosted and ordinary frontend production builds succeeded. Anonymous public health/collection requests returned HTTP 200 after the sharing change. No Oracle writes or schema changes were performed for hosting verification. Public browser smoke checks displayed the real homepage, profiles, trip lists that changed on profile switching, and a live trip dashboard; the published checklist also loaded directly and persisted a browser-local check after reload. Intermittent review service rate limits delayed some browser checks. Hosted write workflows still need team verification using the checklist. See `../handouts.md` for the current deployment, evidence and limitations.
+
+## If the hosted website reports the PC is unavailable
+
+Oracle services running does not mean the Node backend and team tunnel are running. Check these in order:
+
+1. Open `http://localhost:5000/api/health` locally. It must return HTTP 200 with `database: connected`. If it does not, run `npm start` from the repository's `backend` directory and keep that process running.
+2. From the repository root, run `node hosting/team-connection.cjs status`. If the connection is stopped, run `node hosting/team-connection.cjs start`.
+3. Every new temporary tunnel has a new hostname. Apply that printed hostname to the existing Site's `VOYAGE_BACKEND_URL` and redeploy its saved version. Ask Codex to do this if needed; the server key should stay unchanged and secret.
+4. Confirm `https://voyage-tourism-team.blondmoth32.chatgpt.site/api/health` returns HTTP 200, then reload the Site. Keep the PC awake and online. The local frontend development server is unnecessary for the hosted version.
+
+The 21 October interruption was repaired by restoring Express and the gateway/tunnel, updating the backend hostname and redeploying saved version 1 with environment revision 3. Six hosted read-only API checks then matched the local Oracle backend.

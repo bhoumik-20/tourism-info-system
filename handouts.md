@@ -23,9 +23,9 @@ The prior approved live test run passed 15 backend tests and verified browser wo
 - Live URL: https://voyage-tourism-team.blondmoth32.chatgpt.site
 - Manual checklist route: `/team-testing`.
 - Current audience: public, explicitly approved by the owner for anyone with the link. No ChatGPT sign-in is required.
-- Saved version: **1**, deployed successfully on 12 October 2026 at 08:49 UTC with the current live connection settings. Access was changed to public at 08:52 UTC.
-- The user approved a protected temporary Cloudflare tunnel for live application reads and writes. Oracle and Express remain on the owner's PC. On 21 October the public API returned HTTP 503 and no listeners were found on local ports 5000/5001; the live connection is currently unavailable and was not restarted during the security review.
-- Sites source commit: `ab489a43c2d3facff9a2f1661b0d52ef70fd4f96`. Successful deployment: `appgdep_6acc9f1afe848191a8059d5bbe6e81ee` (runtime environment revision 2).
+- Saved version: **1**, most recently redeployed successfully on 21 October 2026 with runtime environment revision **3** after restoring the team connection. Public access was set on 12 October and remains unchanged.
+- The user approved a protected temporary Cloudflare tunnel for live application reads and writes. Oracle and Express remain on the owner's PC. At the start of the 21 October security review, the public API returned HTTP 503 and no listeners were found on local ports 5000/5001. The connection was subsequently restored at the owner's request; see the incident record below.
+- Sites source commit: `ab489a43c2d3facff9a2f1661b0d52ef70fd4f96`. Latest successful deployment: `appgdep_6ad8eea9c4cc8191982d11dbb8d593bc` (runtime environment revision 3).
 - GitHub implementation checkpoint: `c0d188a` (protected Sites connection and team testing guide). The final documentation checkpoint is the commit containing this completed handoff.
 
 The connection is:
@@ -119,3 +119,11 @@ The public API's health and profile-list requests returned HTTP 503 during this 
 Before reconnecting live Oracle, restrict Sites access to the intended team, or use a public demo with disposable data and no connection to the real database. A team-only Site still permits its admitted teammates to switch every classroom profile. Confidential per-user data requires verified identity and server-side ownership checks, which is beyond the current deliberately unauthenticated project scope.
 
 This was a read-only credential scan and focused code/configuration review, not a full penetration test. It cannot rule out exposure in deleted/unreachable history, third-party copies, private messages, logs not inspected, or credentials that were previously changed. The screenshot's generic safety-alert text does not itself establish a credential leak.
+
+## Connection restored — 21 October 2026
+
+- The owner reported that the hosted website was unresponsive despite Oracle services running. Both required Oracle services were confirmed running, but the Express health request on port 5000 failed with ECONNREFUSED, and the gateway/tunnel processes were stopped. Sites still used the previous temporary backend hostname. The cause of the earlier backend process exit was not established.
+- Started the existing backend using its configured local environment; its startup Oracle SELECT and subsequent health request succeeded. Restarted the previously approved protected gateway/tunnel without changing its key. Anonymous direct tunnel health returned 401; the existing server key returned 200 with the database connected.
+- Updated only Sites runtime VOYAGE_BACKEND_URL to the new temporary hostname and redeployed the same saved version 1. Deployment `appgdep_6ad8eea9c4cc8191982d11dbb8d593bc` succeeded with environment revision 3. The Site URL and audience are unchanged.
+- Six read-only hosted responses returned HTTP 200 and exactly matched the local backend: health, cities, POIs, profiles, collection listing and a trip summary. The public browser homepage loaded real POIs and all six collections and displayed "Connected to your tourism database"; a screenshot was saved in the task workspace. No Oracle data, credentials, schema objects or application source code were changed during this repair.
+- Required whenever testing: Oracle services, the Express backend, and the protected gateway/tunnel must all remain running. After a reboot or tunnel restart, apply the new backend hostname in Sites and redeploy the existing saved version. Running Oracle alone is insufficient. The React development server is not needed to view the hosted Site.
