@@ -1,6 +1,6 @@
 # Voyage — current project handoff
 
-Updated: 12 October 2026 (Asia/Kolkata). This is the ongoing handoff; the existing local `handout.md` and SQL spools are preserved separately.
+Updated: 21 October 2026 (Asia/Kolkata). This is the ongoing handoff; the existing local `handout.md` and SQL spools are preserved separately.
 
 ## Current project
 
@@ -24,7 +24,7 @@ The prior approved live test run passed 15 backend tests and verified browser wo
 - Manual checklist route: `/team-testing`.
 - Current audience: public, explicitly approved by the owner for anyone with the link. No ChatGPT sign-in is required.
 - Saved version: **1**, deployed successfully on 12 October 2026 at 08:49 UTC with the current live connection settings. Access was changed to public at 08:52 UTC.
-- The user approved a protected temporary Cloudflare tunnel for live application reads and writes. The gateway/tunnel are running; Oracle and Express remain on the owner's PC.
+- The user approved a protected temporary Cloudflare tunnel for live application reads and writes. Oracle and Express remain on the owner's PC. On 21 October the public API returned HTTP 503 and no listeners were found on local ports 5000/5001; the live connection is currently unavailable and was not restarted during the security review.
 - Sites source commit: `ab489a43c2d3facff9a2f1661b0d52ef70fd4f96`. Successful deployment: `appgdep_6acc9f1afe848191a8059d5bbe6e81ee` (runtime environment revision 2).
 - GitHub implementation checkpoint: `c0d188a` (protected Sites connection and team testing guide). The final documentation checkpoint is the commit containing this completed handoff.
 
@@ -91,3 +91,31 @@ The navbar profile is authoritative for application ownership and persists in ea
 - 12 October: preserved the existing local handoff and began this current handoff. Resumed the same registered Site after an interrupted packaging step. Confirmed Oracle/backend and the approved tunnel are still running. At that point, team access was private pending the user's audience choice.
 
 - 12 October: pushed `c0d188a` before publication. Replaced an expired temporary tunnel, kept the same registered Site and saved source version, and deployed version 1 with current runtime settings. Completed 35 production read comparisons, three direct Oracle read-only tests, frontend/proxy checks and both production builds. Applied the owner's explicit public-access choice and verified anonymous API access, browser profile switching, a real trip dashboard and the reload-persistent team checklist. No Oracle rows or schema objects were changed during the hosting verification.
+
+## Security review — 21 October 2026
+
+Verdict: **no credential exposure found in the reviewed repository/history or public frontend; the public live application is not suitable for confidential data or unrestricted production use.** Keeping a tunnel credential secret does not authenticate the visitors using the public Sites proxy.
+
+### Credential checks
+
+- At the start of this review, both public repositories, `bhoumik-20/tourism-info-system` and the screenshot's `priya-02-k/tourism-info-system`, pointed their main branch to `dc175f55358492f38b8b689716a955d443c149d3`. The same application code was therefore covered by the scan. The documentation-only review commit may subsequently advance the owner's repository.
+- Inspected all 10 reachable commits, 152 historical file blobs, commit messages, 86 tracked working files and eight generated browser text assets. Searched for the actual locally configured database password/tunnel key in memory and common provider-token/private-key/credential patterns. No matches were found. No secret values were printed, uploaded or included in this handoff.
+- `backend/.env` and `hosting/.env.team` are ignored by Git. No historical tracked credential file was found. The committed database password example is blank.
+- Sites runtime environment revision 2 marks `VOYAGE_TUNNEL_KEY` as a secret and returns its value masked. The public application JavaScript contains neither the configured secret values nor the tunnel secret's variable name. No exposed source-map reference was present in the fetched scripts.
+- The public root and JavaScript returned HTTP 200. Requests for `/.env`, `/backend/.env` and `/hosting/.env.team` returned HTTP 404; no credentials were served.
+- The official npm dependency audits for both committed backend/frontend lockfiles returned zero known advisories on the review date. This is not a guarantee against undiscovered issues.
+
+### Access-control findings
+
+- **High priority before reconnecting real data:** the Site's audience is still public, as previously requested. Profiles are an intentionally unauthenticated classroom switcher. API routes accept profile IDs from the caller, so visitors can select any profile and access its details/plans or submit application writes under that profile when the backend is online. Profile detail responses include email, phone and date of birth when populated. A profile ID is not proof of identity.
+- The hidden tunnel key protects the direct tunnel endpoint. The public Sites server automatically supplies it for visitors, so visitors do not need to know that key to use the website's API. Origin/CORS checks are not user authentication or per-user authorization. See [OWASP object-level authorization guidance](https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization/) and [Express CORS documentation](https://expressjs.com/en/resources/middleware/cors/).
+- No application rate limiting was found. The fetched public root did not include CSP, framing, nosniff or referrer-policy headers. These are additional hardening opportunities; the primary issue is public access to shared profiles/data.
+- Positive controls inspected: Oracle SQL bind variables, validated inputs, commit/rollback handling, credential-safe error responses, loopback-only Express/gateway listeners and timing-safe gateway key comparison.
+
+### Current status and recommended next step
+
+The public API's health and profile-list requests returned HTTP 503 during this review, and local ports 5000/5001 were not listening. No live database writes, destructive tests, process starts, schema changes, credential rotations or access-policy changes were performed. Application code and unrelated untracked files were left untouched; only this handoff was updated.
+
+Before reconnecting live Oracle, restrict Sites access to the intended team, or use a public demo with disposable data and no connection to the real database. A team-only Site still permits its admitted teammates to switch every classroom profile. Confidential per-user data requires verified identity and server-side ownership checks, which is beyond the current deliberately unauthenticated project scope.
+
+This was a read-only credential scan and focused code/configuration review, not a full penetration test. It cannot rule out exposure in deleted/unreachable history, third-party copies, private messages, logs not inspected, or credentials that were previously changed. The screenshot's generic safety-alert text does not itself establish a credential leak.
