@@ -1,6 +1,6 @@
 # Voyage — current project handoff
 
-Updated: 21 October 2026 (Asia/Kolkata). This is the ongoing handoff; the existing local `handout.md` and SQL spools are preserved separately.
+Updated: 22 October 2026 (Asia/Kolkata). This is the ongoing handoff; the existing local `handout.md` and SQL spools are preserved separately.
 
 ## Current project
 
@@ -127,3 +127,11 @@ This was a read-only credential scan and focused code/configuration review, not 
 - Updated only Sites runtime VOYAGE_BACKEND_URL to the new temporary hostname and redeployed the same saved version 1. Deployment `appgdep_6ad8eea9c4cc8191982d11dbb8d593bc` succeeded with environment revision 3. The Site URL and audience are unchanged.
 - Six read-only hosted responses returned HTTP 200 and exactly matched the local backend: health, cities, POIs, profiles, collection listing and a trip summary. The public browser homepage loaded real POIs and all six collections and displayed "Connected to your tourism database"; a screenshot was saved in the task workspace. No Oracle data, credentials, schema objects or application source code were changed during this repair.
 - Required whenever testing: Oracle services, the Express backend, and the protected gateway/tunnel must all remain running. After a reboot or tunnel restart, apply the new backend hostname in Sites and redeploy the existing saved version. Running Oracle alone is insufficient. The React development server is not needed to view the hosted Site.
+
+## PR #1 review — 22 October 2026
+
+- Reviewed [Replace frontend with Travelling Companion demo](https://github.com/bhoumik-20/tourism-info-system/pull/1), head `abcc0a05eb505ef107e9473a17acdc6ce7991d2e`, against application baseline `93082ec53a6d51e92947ababce3fea6e7c023139`. Recommendation: **request changes; do not merge the replacement as submitted**. Full evidence, file/line references and approval conditions are in [PR_1_REVIEW.md](PR_1_REVIEW.md).
+- GitHub reported a clean merge and local merge-tree verification passed. All 21 frontend tests, the ordinary production build and the Sites build passed in an isolated snapshot. No CI checks/statuses were reported for the reviewed head. Existing tests mostly exercise helpers outside the replacement's active import graph; the four new tests check fixture consistency.
+- Blocking project conflicts: the default frontend is unconditionally switched to sample data/localStorage; real profiles, Express/Oracle integration, all six view-backed collections and the live trip dashboard are unreachable. URL routing, advanced filters and review deletion also regress. The local demo's completed-trip/date/deletion behavior differs from installed Oracle trigger/FK rules.
+- Browser reproduction: saving MTR in Content curator and opening its details produces `paymentMethods?.join is not a function` and a blank app. A Completed sample trip could still be renamed. A missing-date itinerary was accepted. Opening `/team-testing` directly rendered Overview. Disposable browser sample state was reset and the review preview was stopped.
+- Backend/database/schema/dependency files were unchanged by the PR. The changed-file credential scan found no configured secret or common provider-token/private-key matches. The review performed no live Oracle writes and did not merge, deploy, change access controls or post a GitHub review/comment. Only documentation was added to the owner's repository; unrelated local files remain untouched.
