@@ -2,6 +2,19 @@
 
 React + Vite + Tailwind CSS + React Router, inside the existing `tourism-info-system` monorepo. No separate backend or authentication service.
 
+## Active frontend: Travelling Companion local demo
+
+The active app entry (`src/App.jsx`) now opens the Travelling Companion demo. It uses curated sample records and browser `localStorage`; it does not call the existing API or connect to a backend or database. The existing API service files, environment examples, backend, and database are retained unchanged. The route and live-integration descriptions below document the previous API-integrated frontend and are not active in this demo.
+
+From this directory, with Node.js 22.12 or newer, run:
+
+```sh
+npm ci
+npm run dev
+```
+
+Open the Vite URL shown in the terminal (normally `http://localhost:5173`). Run `npm test` for frontend tests and `npm run build` for the production bundle. The demo covers city/POI discovery, saves, reviews, trips, itineraries, curator sample data, and POI relationships. Changes persist only in the current browser; use **Reset sample data** in the sidebar to restore the initial fixture.
+
 ## Run locally
 
 From `Code/frontend` with Node.js 22.12+ (verified on Node 24.19):
