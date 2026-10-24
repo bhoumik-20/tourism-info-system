@@ -16,6 +16,7 @@ async function initialize() {
     poolMin: 1, poolMax: 4, poolIncrement: 1,
     queueTimeout: 10000,
   });
+  console.log('Database is connected..');
 }
 
 async function read(work) {

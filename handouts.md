@@ -1,6 +1,6 @@
 # Voyage — current project handoff
 
-Updated: 22 October 2026 (Asia/Kolkata). This is the ongoing handoff; the existing local `handout.md` and SQL spools are preserved separately.
+Updated: 24 October 2026 (Asia/Kolkata). This is the ongoing handoff; the existing local `handout.md` and SQL spools are preserved separately.
 
 ## Current project
 
@@ -135,3 +135,12 @@ This was a read-only credential scan and focused code/configuration review, not 
 - Blocking project conflicts: the default frontend is unconditionally switched to sample data/localStorage; real profiles, Express/Oracle integration, all six view-backed collections and the live trip dashboard are unreachable. URL routing, advanced filters and review deletion also regress. The local demo's completed-trip/date/deletion behavior differs from installed Oracle trigger/FK rules.
 - Browser reproduction: saving MTR in Content curator and opening its details produces `paymentMethods?.join is not a function` and a blank app. A Completed sample trip could still be renamed. A missing-date itinerary was accepted. Opening `/team-testing` directly rendered Overview. Disposable browser sample state was reset and the review preview was stopped.
 - Backend/database/schema/dependency files were unchanged by the PR. The changed-file credential scan found no configured secret or common provider-token/private-key matches. The review performed no live Oracle writes and did not merge, deploy, change access controls or post a GitHub review/comment. Only documentation was added to the owner's repository; unrelated local files remain untouched.
+
+## Connection message and test check — 24 October 2026
+
+- Added the exact startup message `Database is connected..` in `backend/src/config/database.js` after the Oracle connection pool is created successfully. The pool initializes a real connection (poolMin 1); the existing server startup also executes SELECT 1 FROM DUAL before listening. No credentials or connection objects are logged.
+- Preserved the owner's pre-existing local edit in database.js. Only the added log line is staged for the implementation commit; the unrelated edit remains local.
+- Both required Oracle services were running. At initial inspection, neither Express nor a local Vite server was listening. Confirmed the frontend's configured development/preview URLs, localhost:5173 and localhost:4173, refused connections, and no Vite process was found. The frontend was not started as part of this request.
+- Ran the existing live SELECT-only backend suite: **3 passed** (profile aggregates, six curated views/filters, independent trip dashboard totals). Ran current main's frontend suite: **17 passed**. The frontend production build and database.js syntax check passed. The separate PR #1 demo was not merged or used for these checks.
+- Started the existing backend normally; terminal output showed `Database is connected..` followed by `Tourism API: http://localhost:5000/api`. The backend was left running. To start the local frontend, run `npm run dev` from the repository's frontend directory and open http://localhost:5173.
+- No live INSERT/UPDATE/DELETE test suites, schema commands, credential changes or Sites deployment were performed. No database records were changed.
